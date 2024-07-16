@@ -10,7 +10,7 @@
 
 line機器人傳訊-->完成
 
-git action 部屬-->未完成
+git action 部屬-->完成
 
 教學-->未完成
 
