@@ -10,7 +10,9 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
+permissions:
+  contents: write  # 將 read 改為 write 以允許推送更改
+  
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   execute-notebook:
@@ -37,10 +39,10 @@ jobs:
 
     - name: Commit changes
       run: |
-        git config --global user.email "ccheng686@yahoo.com.tw"
-        git config --global user.name "nekowaneko"
-        git add trading_history.json
-        git commit -m "Update trading history"
+        git config --local user.name 'nekowaneko'
+        git config --local user.email 'ccheng686@yahoo.com.tw'
+        git add trading_history.json  # 添加這行來暫存新建的文件
+        git commit -m "Add changes"
         git push
 
 
