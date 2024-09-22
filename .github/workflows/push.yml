@@ -1,15 +1,11 @@
-# This is a basic workflow to help you get started with Actions
-
 name: push commit
 
-# Controls when the workflow will run
 on:
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pull-requests: write
+  contents: write  # 將 read 改為 write 以允許推送更改
+
 jobs:
   report:
     runs-on: ubuntu-latest
@@ -21,5 +17,6 @@ jobs:
         run: |
           git config --local user.name 'nekowaneko'
           git config --local user.email 'ccheng686@yahoo.com.tw'
-          git commit -a -m "Add changes"
+          git add report.txt  # 添加這行來暫存新建的文件
+          git commit -m "Add changes"
           git push
