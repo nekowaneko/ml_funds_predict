@@ -21,5 +21,5 @@ jobs:
         run: |
           git config --local user.name 'nekowaneko'
           git config --local user.email 'ccheng686@yahoo.com.tw'
-          git commit -am "Automated report"
+          git commit -a -m "Add changes"
           git push
