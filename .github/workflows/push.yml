@@ -20,6 +20,6 @@ jobs:
       - name: Commit report
         run: |
           git config --global user.name 'nekowaneko'
-          git config --global user.email 'nekowaneko@users.noreply.github.com'
+          git config --global user.email 'ccheng686@yahoo.com.tw'
           git commit -am "Automated report"
           git push
