@@ -1,1 +1,1 @@
-{"historical_investment": 1000, "income": 0, "roi": 0, "transactions": [{"date": "2024-09-22", "action": "buy", "shares": 4.50815976918222, "net_value": 221.82}]}
+{"historical_investment": 2000, "income": 0, "roi": 0, "transactions": [{"date": "2024-09-22", "action": "buy", "shares": 4.50815976918222, "net_value": 221.82}, {"date": "2024-09-23", "action": "buy", "shares": 4.511210357738982, "net_value": 221.67}]}
