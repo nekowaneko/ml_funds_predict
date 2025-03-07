@@ -41,7 +41,7 @@ jobs:
       run: |
         git config --local user.name 'nekowaneko'
         git config --local user.email 'ccheng686@yahoo.com.tw'
-        git add trading_history.json  # 添加這行來暫存新建的文件
+        git add . # 添加所有更改，包括 untracked files
         git commit -m "Add changes"
         git push
 
