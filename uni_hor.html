@@ -1,0 +1,505 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=big5">
+<script type="text/javascript" src="/w/js/jquery-latest.djjs"></script>
+<script type="text/javascript" src="/w/js/Applet2Canvas.djjs"></script>
+<script type="text/javascript" src="/w/js/DJWebGraph.djjs"></script>
+<title>國內基金淨值表</title>
+<link rel=stylesheet href="/w/js/wFund.css" type="text/css">
+<script language="JavaScript" src="/w/js/cookie.js"></script>
+<script language="JavaScript" src="/w/js/wtfundjs.djjs"></script>
+<script language="JavaScript" src="/w/js/wtfund.js"></script>
+<script language="JavaScript" src="/w/js/jsFunction.js"></script>
+<script type="text/javascript" src="/w/js/jquery-ui/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="/w/js/jquery-ui/jquery-ui.css">
+<script language="JavaScript"><!--
+CheckMenu('wr02','ACPS02','NA','NA');
+// --></script>
+</head>
+<body>
+<script language="javascript" src="/w/js/SU.js"></script>
+<center>
+<div id="buyFundDialog" title="申購方式" style="display: none;">
+<p></p>
+請選擇下列申購方式
+</div>
+<div id="SysJustIFRAMEDIV">
+<table border="0" width="680"><tr><td class="wfb00c">
+
+<SCRIPT LANGUAGE=javascript>
+<!--
+window.onload = GoStart;
+
+function GoStart()
+{
+	ComboReset('ACPS02-0603');
+}
+
+function FundGoPage(sObj)
+{
+	var sURL = '/w/wr/wr02.djhtm?a=';
+	var sFID = sObj.selTFund3.options[sObj.selTFund3.selectedIndex].value;
+	if ( sFID != '0' )
+		document.location = sURL + sFID;
+}
+//-->
+</SCRIPT>
+<table id="oMainTable" class="wfb0c" border="0" style="border-collapse: separate" cellpadding="1" cellspacing="1" width="680">
+<FORM method=POST name="wr02_frm">
+<div class="tabs"><ul>
+<li class=><a href="/w/wr/wr01_ACPS02-0603.djhtm">基本資料</a></li>
+<li class=on><a href="/w/wr/wr02_ACPS02-0603.djhtm">淨值走勢</a></li>
+<li class=><a href="/w/wr/wr03_ACPS02-0603.djhtm">績效分析</a></li>
+<li class=><a href="/w/wr/wr04_ACPS02-0603.djhtm">持股狀況</a></li>
+<li class=><a href="/w/wr/wr10_ACPS02-0603.djhtm">配息紀錄</a></li>
+</ul></div>
+<script language="javascript" src="/w/js/WtFundlistJS.djjs"></script>
+<tr id="oScrollHead"><td class="wfb1c" colspan="2">
+<SCRIPT LANGUAGE=javascript><!--
+ var sObj = eval('document.' + 'wr02_frm'); 
+	iID = 'ACPS02-0603';
+	GenFundCorpCombo('BFZPSA','ACPS02-0603','wr02_frm');
+	for (i=0;i<sObj.selTFund_corp.options.length;i++)
+	{
+		var tmpID1 = sObj.selTFund_corp.options[i].value.toUpperCase();
+		if (tmpID1 == 'BFZPSA') 
+		{
+			sObj.selTFund_corp.selectedIndex = i;
+			break;
+		}
+	}
+	for (i=0;i<sObj.selTFund3.options.length;i++)
+	{
+		var tmpID2 = sObj.selTFund3.options[i].value.toUpperCase();
+		if (iID != '')
+		{
+			if (tmpID2 == iID )
+			{
+				sObj.selTFund3.selectedIndex = i;
+				break;
+			}
+		}
+		else
+			sObj.selTFund3.selectedIndex = 0;
+	}
+//--></SCRIPT>
+　<!--FundBuyBtn-->
+</td></tr><tr><td class="wfb3c" colspan="2">
+<table width="100%" border="0" cellspacing="1" cellpadding="1" class="wfb3l">
+<td class="wfb3c" rowspan="2">請選擇期間</td>
+<td class="wfb3l">
+<input type="radio" name="radioMonth" onClick="javascript:radioSelYear_onclick(true);"  checked>
+<SELECT name=selYEAR onChange="javascript:SelYear_onChange(true,this.selectedIndex);">
+<OPTION>ＸＸＸＸＸ</OPTION>
+</SELECT>
+</td>
+<td class="wfb3c" rowspan="2"><INPUT type="button" name="BB1" value="開始查詢" onclick="javascript:jumpgo();"></td>
+</tr>
+<tr><td class="wfb3l">
+<input type="radio" name="radioMonth" onClick="javascript:radioSelYear_onclick(false);" >
+<script language="JavaScript" src="/w/js/month.js"></script>
+從<SELECT name="Y2" onChange="javascript:SetMonthDate(document.wr02_frm.Y2,document.wr02_frm.M2,document.wr02_frm.D2);">
+	<OPTION value="91"></OPTION>
+</SELECT>年
+<SELECT name="M2" onChange="javascript:SetMonthDate(document.wr02_frm.Y2,document.wr02_frm.M2,document.wr02_frm.D2);">
+   <OPTION value="-1"></OPTION>
+</SELECT>月
+<SELECT name="D2">
+   <OPTION value="-1"></OPTION>
+</SELECT>日至
+<SELECT name="Y1" onChange="javascript:SetMonthDate(document.wr02_frm.Y1,document.wr02_frm.M1,document.wr02_frm.D1);">
+	<OPTION value="91"></OPTION>
+</SELECT>年
+<SELECT name="M1" onChange="javascript:SetMonthDate(document.wr02_frm.Y1,document.wr02_frm.M1,document.wr02_frm.D1);">
+   <OPTION value="-1"></OPTION>
+</SELECT>月
+<SELECT name="D1">
+   <OPTION value="-1"></OPTION>
+</SELECT>日
+<SCRIPT LANGUAGE=javascript><!--
+	var getYMD1 = '2025-3-7';
+	var getYMD2 = '2024-3-7';
+   PageInit(document.wr02_frm);
+   function PageInit(obj){		//在 BODY onLoad 時候的初始化
+		ShowYear(obj.Y1);						
+		ShowYear(obj.Y2);						
+		SetOptionValue(obj.M1,1,12);		
+		SetOptionValue(obj.M2,1,12);		
+		//設定初始值						
+		var YMDary1 = getYMD1.split('-');	
+		SetFocus(obj.Y1,YMDary1[0]);   
+		SetFocus(obj.M1,YMDary1[1]);		
+		var YMDary2 = getYMD2.split('-');	
+		SetFocus(obj.Y2,YMDary2[0]);   
+		SetFocus(obj.M2,YMDary2[1]);		
+		SetMonthDate(obj.Y1,obj.M1,obj.D1);		
+		SetMonthDate(obj.Y2,obj.M2,obj.D2);		
+		SetFocus(obj.D2,YMDary2[2]);		
+		SetFocus(obj.D1,YMDary1[2]);		
+	}										
+  function CheckSubmit (){												
+		var Frm = document.wr02_frm;										
+       var y1 = parseInt(Frm.Y1.options[Frm.Y1.selectedIndex].value);	
+      	var m1 = parseInt(Frm.M1.options[Frm.M1.selectedIndex].value);	
+      	var d1 = parseInt(Frm.D1.options[Frm.D1.selectedIndex].value);	
+       var y2 = parseInt(Frm.Y2.options[Frm.Y2.selectedIndex].value);	
+      	var m2 = parseInt(Frm.M2.options[Frm.M2.selectedIndex].value);	
+      	var d2 = parseInt(Frm.D2.options[Frm.D2.selectedIndex].value);	
+      	var sEDate = y1+'-'+m1+'-' + d1;							
+      	var sBDate = y2+'-'+m2+'-' + d2;							
+      	if(checkBEdate(sBDate,sEDate)){								
+			return sBDate + '_' + sEDate;							
+		}															
+		else														
+			return 'false';											
+	}																
+  function checkBEdate(sBDate,sEDate){												
+	var aymd1 = sBDate.split('-');													
+	var aymd2 = sEDate.split('-');													
+   if (aymd1.length < 3 || aymd2.length < 3 ) {									
+			alert ('日期選擇錯誤!!');													
+			return false;																
+	}																				
+   var nbdate = parseInt(aymd1[0])*10000+parseInt(aymd1[1])*100+parseInt(aymd1[2]);
+   var nedate = parseInt(aymd2[0])*10000+parseInt(aymd2[1])*100+parseInt(aymd2[2]);
+   if (nbdate > nedate) {															
+			alert('您所輸入的起始日期大於結束日期');									
+			return false;																
+	}																				
+	    return true;																
+   }																				
+//--></SCRIPT>
+</td></tr>
+</table>
+</td></tr>
+<tr><td class="wfb5c" colspan="2">
+<div id="SysJustWebGraphDIV"></div></td></tr>
+<tr><td class=wfb1c colspan="2">統一黑馬基金-近30日淨值</td></tr>
+<tr>
+<td width="50%" class="wfb2c">
+<table width="100%" class="wfb0c" cellspacing="1" cellpadding="1">
+<tr><td class=wfb3c>日期</td>
+<td class=wfb3c>淨值</td>
+<td class=wfb3c>漲/跌</td>
+<td class=wfb3c>漲跌幅(%)</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/03/07</td>
+<td class=wfb5r>212.24</td>
+<td class="wfb5rr">-3.09</td>
+<td class="wfb5rr">-1.44</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/03/06</td>
+<td class=wfb2r>215.33</td>
+<td class="wfb2rr">-0.74</td>
+<td class="wfb2rr">-0.34</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/03/05</td>
+<td class=wfb5r>216.07</td>
+<td class="wfb5r">0.85</td>
+<td class="wfb5r">0.39</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/03/04</td>
+<td class=wfb2r>215.22</td>
+<td class="wfb2r">0.97</td>
+<td class="wfb2r">0.45</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/03/03</td>
+<td class=wfb5r>214.25</td>
+<td class="wfb5rr">-4.16</td>
+<td class="wfb5rr">-1.9</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/02/27</td>
+<td class=wfb2r>218.41</td>
+<td class="wfb2rr">-4.08</td>
+<td class="wfb2rr">-1.83</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/02/26</td>
+<td class=wfb5r>222.49</td>
+<td class="wfb5r">2.44</td>
+<td class="wfb5r">1.11</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/02/25</td>
+<td class=wfb2r>220.05</td>
+<td class="wfb2rr">-4.26</td>
+<td class="wfb2rr">-1.9</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/02/24</td>
+<td class=wfb5r>224.31</td>
+<td class="wfb5rr">-2.17</td>
+<td class="wfb5rr">-0.96</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/02/21</td>
+<td class=wfb2r>226.48</td>
+<td class="wfb2r">1.65</td>
+<td class="wfb2r">0.73</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/02/20</td>
+<td class=wfb5r>224.83</td>
+<td class="wfb5rr">-2.58</td>
+<td class="wfb5rr">-1.13</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/02/19</td>
+<td class=wfb2r>227.41</td>
+<td class="wfb2rr">-0.59</td>
+<td class="wfb2rr">-0.26</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/02/18</td>
+<td class=wfb5r>228.00</td>
+<td class="wfb5r">2.3</td>
+<td class="wfb5r">1.02</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/02/17</td>
+<td class=wfb2r>225.70</td>
+<td class="wfb2r">2.46</td>
+<td class="wfb2r">1.1</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/02/14</td>
+<td class=wfb5r>223.24</td>
+<td class="wfb5rr">-1.09</td>
+<td class="wfb5rr">-0.49</td>
+</tr>
+</table>
+</td>
+<td width="50%" class="wfb2c">
+<table width="100%" class="wfb0c" cellspacing="1" cellpadding="1">
+<tr><td class=wfb3c>日期</td>
+<td class=wfb3c>淨值</td>
+<td class=wfb3c>漲/跌</td>
+<td class=wfb3c>漲跌幅(%)</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/02/13</td>
+<td class=wfb5r>224.33</td>
+<td class="wfb5rr">-0.17</td>
+<td class="wfb5rr">-0.08</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/02/12</td>
+<td class=wfb2r>224.50</td>
+<td class="wfb2rr">-2.33</td>
+<td class="wfb2rr">-1.03</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/02/11</td>
+<td class=wfb5r>226.83</td>
+<td class="wfb5r">3.69</td>
+<td class="wfb5r">1.65</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/02/10</td>
+<td class=wfb2r>223.14</td>
+<td class="wfb2rr">-3.55</td>
+<td class="wfb2rr">-1.57</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/02/07</td>
+<td class=wfb5r>226.69</td>
+<td class="wfb5r">6.92</td>
+<td class="wfb5r">3.15</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/02/06</td>
+<td class=wfb2r>219.77</td>
+<td class="wfb2r">1.69</td>
+<td class="wfb2r">0.77</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/02/05</td>
+<td class=wfb5r>218.08</td>
+<td class="wfb5r">5.09</td>
+<td class="wfb5r">2.39</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/02/04</td>
+<td class=wfb2r>212.99</td>
+<td class="wfb2rr">-2.3</td>
+<td class="wfb2rr">-1.07</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/02/03</td>
+<td class=wfb5r>215.29</td>
+<td class="wfb5rr">-13.79</td>
+<td class="wfb5rr">-6.02</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/01/22</td>
+<td class=wfb2r>229.08</td>
+<td class="wfb2r">2.21</td>
+<td class="wfb2r">0.97</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/01/21</td>
+<td class=wfb5r>226.87</td>
+<td class="wfb5r">0.66</td>
+<td class="wfb5r">0.29</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/01/20</td>
+<td class=wfb2r>226.21</td>
+<td class="wfb2r">4.18</td>
+<td class="wfb2r">1.88</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/01/17</td>
+<td class=wfb5r>222.03</td>
+<td class="wfb5rr">-0.44</td>
+<td class="wfb5rr">-0.2</td>
+</tr>
+<tr>
+<td class=wfb2c>2025/01/16</td>
+<td class=wfb2r>222.47</td>
+<td class="wfb2r">6.08</td>
+<td class="wfb2r">2.81</td>
+</tr>
+<tr>
+<td class=wfb5c>2025/01/15</td>
+<td class=wfb5r>216.39</td>
+<td class="wfb5rr">-3.24</td>
+<td class="wfb5rr">-1.48</td>
+</tr>
+</table>
+</td>
+</tr>
+<input type="hidden" name="as_sfid" value="AAAAAAXMW40DfX58WTwEMXZKQ8RYrkBZQhYlpSRaRxoWIX0mlZUXBCdAg9k5cTrZTi5hNfa1_ag5F4tyOYv-c0m8Fpxt7tPFlOmuismnb7MXNYX-OrtYPKzir_Pn3GqQYNzxEx30gERKqS5XjJo8l4gMFq4VE8XFs_SmPkzSd-4_eN2rfQ==" /><input type="hidden" name="as_fid" value="0d06a8e729c081a4078f9f9f26594f6783691d9a" /></FORM>
+</table>
+<script language="JavaScript"><!--
+var sfund_year ='1@1@一年淨值@1@2@1@二年淨值@1@3@1@三年淨值@1@7@1@五年淨值@1@4@1@一個月淨值@1@5@1@三個月淨值@1@6@1@六個月淨值@1@';
+InitComboList(document.wr02_frm.selYEAR, '', '', '1', sfund_year, '請選擇');
+function radioSelYear_onclick(a) {		
+     if (a) {							
+			document.wr02_frm.elements['Y1'].disabled = true;    
+			document.wr02_frm.elements['Y2'].disabled = true;    
+			document.wr02_frm.elements['M1'].disabled = true;    
+			document.wr02_frm.elements['M2'].disabled = true;    
+			document.wr02_frm.elements['D1'].disabled = true;    
+			document.wr02_frm.elements['D2'].disabled = true;    
+			document.wr02_frm.elements['selYEAR'].disabled = false;    
+     }else{							
+			document.wr02_frm.elements['Y1'].disabled = false;    
+			document.wr02_frm.elements['Y2'].disabled = false;    
+			document.wr02_frm.elements['M1'].disabled = false;    
+			document.wr02_frm.elements['M2'].disabled = false;    
+			document.wr02_frm.elements['D1'].disabled = false;    
+			document.wr02_frm.elements['D2'].disabled = false;    
+			document.wr02_frm.elements['selYEAR'].disabled = true;    
+		}								
+}			
+function SelYear_onChange(a,b) {		
+     if (a) {							
+			if (b > 0) {					
+				document.wr02_frm.elements['Y1'].disabled = true;    
+				document.wr02_frm.elements['Y2'].disabled = true;    
+				document.wr02_frm.elements['M1'].disabled = true;    
+				document.wr02_frm.elements['M2'].disabled = true;    
+				document.wr02_frm.elements['D1'].disabled = true;    
+				document.wr02_frm.elements['D2'].disabled = true;    
+				document.wr02_frm.elements['selYEAR'].disabled = false;    
+				document.wr02_frm.elements['radioMonth'][0].checked = true;    
+			}else{							
+				document.wr02_frm.elements['Y1'].disabled = false;    
+				document.wr02_frm.elements['Y2'].disabled = false;    
+				document.wr02_frm.elements['M1'].disabled = false;    
+				document.wr02_frm.elements['M2'].disabled = false;    
+				document.wr02_frm.elements['D1'].disabled = false;    
+				document.wr02_frm.elements['D2'].disabled = false;    
+				document.wr02_frm.elements['selYEAR'].disabled = false;    
+				document.wr02_frm.elements['radioMonth'][0].checked = false;    
+			}								
+     }else{							
+				document.wr02_frm.elements['Y1'].disabled = false;    
+				document.wr02_frm.elements['Y2'].disabled = false;    
+				document.wr02_frm.elements['M1'].disabled = false;    
+				document.wr02_frm.elements['M2'].disabled = false;    
+				document.wr02_frm.elements['D1'].disabled = false;    
+				document.wr02_frm.elements['D2'].disabled = false;    
+				document.wr02_frm.elements['selYEAR'].disabled = true;    
+				document.wr02_frm.elements['radioMonth'][0].checked = false;    
+				document.wr02_frm.elements['radioMonth'][1].checked = true;    
+		}								
+}									
+function jumpgo(){ 
+	var bcdurl = ''; 
+	var mLink='';
+	if (document.wr02_frm.elements['radioMonth'][0].checked && document.wr02_frm.elements['selYEAR'].selectedIndex > 0) {
+		mLink = '_' + document.wr02_frm.elements['selYEAR'].options[document.wr02_frm.elements['selYEAR'].selectedIndex].value + '_0_0';
+	}else if (document.wr02_frm.elements['radioMonth'][1].checked) {
+		var sTempDate= CheckSubmit() ;
+		if (sTempDate != 'false')	
+			mLink = '_0_' + sTempDate;	
+		else return;
+	}
+	if (mLink == '') {
+		alert('請選擇要比較的區間');
+		document.wr02_frm.elements['BB1'].disabled =  false;
+		return;
+	}
+	bcdurl = '/w/wr/wr02_ACPS02-0603' + mLink + '.djhtm';
+	self.location = bcdurl ; 
+} 
+// --></script>
+</td></tr>
+<tr><td>
+</td></tr>
+</table>
+</div>
+<script language="javascript" src="/w/js/SD.js"></script>
+</center>
+<script language="javascript" src="/w/js/CelebrusInsertJS.djjs"></script>
+</body>
+</html>
+
+<SCRIPT LANGUAGE=javascript>
+<!--
+    var $DJWebGraph1;
+    var sRenderTo = 'SysJustWebGraphDIV';
+    $(document).ready(function () {
+        if (!!$DJWebGraph) {
+            $DJWebGraph1 = new $DJWebGraph();
+            $DJWebGraph1.CallBack = GetBcdData;
+            $DJWebGraph1.CreateGraphObject({
+                'CanvasClass': 'canvas', //表示為複合式圖形
+                'ID': 'PRICET', //單一Line 價格走勢圖使用
+                'Width': '660',
+                'Height': '300',
+                'RenderTo': sRenderTo,
+                'Type': ["Mountain"],
+                'Caption': '統一黑馬基金 基金淨值走勢圖',
+                'Unit': ["元(台幣)"],
+                'GDN1':["C4EBFD"],
+                'GDN2':["0EB5F0"],
+                'LineColor':["ffffff"],
+                'BgColor': 'ffffff',
+                'BCDUrl': '/w/bcd/tBCDNavList.djbcd?a=ACPS02&b=1&c=2024-3-7&d=2025-3-7'
+            })
+        }
+    });
+
+    function GetBcdData(data) {
+        if (!!data.length) {
+            var arrData = data.split(' ');
+            var X = arrData[0];
+
+            var ArrY = [[arrData[1]]];
+
+            $DJWebGraph1.SetGraphBcd({ 'X': X, 'Y': ArrY });
+        }
+    }
+//-->
+</SCRIPT>
