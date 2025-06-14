@@ -12,6 +12,10 @@ on:
   workflow_dispatch:
 permissions:
   contents: write  # 將 read 改為 write 以允許推送更改
+
+env:
+  token : ${{ secrets.TOKEN }}
+  channel_id : ${{ secrets.CHANNEL_ID }}
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
