@@ -1,25 +1,15 @@
-# This is a basic workflow to help you get started with Actions
+name: Funds Predict Workflow
 
-name: Execute climb-warm.ipynb
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   schedule:
-    - cron: '0 21 * * *' # 每24小时执行一次
+    - cron: '0 21 * * *' # 每天 UTC 21:00 (台灣時間 05:00) 執行
+  workflow_dispatch: # 允許手動觸發
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
 permissions:
-  contents: write  # 將 read 改為 write 以允許推送更改
+  contents: write
 
-env:
-  token : ${{ secrets.TOKEN }}
-  channel_id : ${{ secrets.CHANNEL_ID }}
-  
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  execute-notebook:
+  run-pipeline:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,25 +19,42 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10' # 指定你需要的Python版本
+        python-version: '3.10'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install jupyter pandas numpy jsons # 安装需要的库
+        # 假設 requirements.txt 位於 funds_predict_workflow 目錄下
+        pip install -r requirements.txt
 
-    - name: Execute Jupyter Notebook
+    - name: Run Prediction Pipeline
+      env:
+        # 從 GitHub Secrets 注入環境變數
+        DISCORD_TOKEN: ${{ secrets.TOKEN }}
+        DISCORD_CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+        # 如果需要，也可以加入 LINE_NOTIFY_TOKEN
+        # LINE_NOTIFY_TOKEN: ${{ secrets.LINE_NOTIFY_TOKEN }}
       run: |
-        pip install nbconvert
-        jupyter nbconvert --to notebook --execute climb-warm.ipynb --output executed-climb-warm.ipynb
+        # 使用 -m 執行模組，確保相對引用正確
+        # 加上 --train 參數以執行模型訓練，若只想爬取與預測可移除
+        python -m funds_predict_workflow.main --train
 
-    - name: Commit changes
+    - name: Commit and Push Changes
+      # 只有當資料夾內有變動 (如新爬取的 CSV 或模型檔) 才 Commit
       run: |
-        git config --local user.name 'nekowaneko'
-        git config --local user.email 'ccheng686@yahoo.com.tw'
-        git add . # 添加所有更改，包括 untracked files
-        git commit -m "Add changes"
-        git push
-
-
-    
+        git config --local user.name 'github-actions[bot]'
+        git config --local user.email 'github-actions[bot]@users.noreply.github.com'
+        
+        # 加入生成的資料與模型檔案
+        # 假設資料存放在 funds_predict_workflow/uniblack_stocks
+        # 模型存放在 funds_predict_workflow/models
+        git add uniblack_stocks/*.csv
+        git add models/*.pth
+        
+        # 檢查是否有變更需要 Commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit."
+        else
+          git commit -m "Auto-update: Latest stock data and model [skip ci]"
+          git push
+        fi
