@@ -1,0 +1,11 @@
+requests
+beautifulsoup4
+pandas
+lxml
+tqdm
+chardet
+tenacity
+scikit-learn
+torch
+numpy
+discord
