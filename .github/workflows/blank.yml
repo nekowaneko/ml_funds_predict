@@ -37,7 +37,7 @@ jobs:
       run: |
         # 使用 -m 執行模組，確保相對引用正確
         # 加上 --train 參數以執行模型訓練，若只想爬取與預測可移除
-        python -m main --train
+        python -m main.py --train
 
     - name: Commit and Push Changes
       # 只有當資料夾內有變動 (如新爬取的 CSV 或模型檔) 才 Commit
