@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 # 導入自定義模組
 import config
 import utils
-from .train_model import TCN, preprocess_data 
+from train_model import TCN, preprocess_data 
 
 def load_model(stock_code):
     """
