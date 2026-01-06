@@ -3,11 +3,11 @@ import sys
 from datetime import datetime
 
 # 導入自定義模組
-from . import config
-from . import scraper
-from . import train_model
-from . import predict
-from . import notifier
+import config
+import scraper
+import train_model
+import predict
+import notifier
 
 def run_pipeline(do_train=False):
     """
