@@ -54,7 +54,8 @@ def get_data(date_str, stock_code):
         if title_row is None:
             return None
             
-        columns = [th.text.strip() for th in title_row.find_all('td')]
+        # 修正：標題列通常使用 <th> 標籤，而非 <td>
+        columns = [th.text.strip() for th in title_row.find_all(['th', 'td'])]
         
         datalist = []
         tbody = soup.find('tbody')
