@@ -5,8 +5,8 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 
 # 導入自定義模組
-from . import config
-from . import utils
+import config
+import utils
 from .train_model import TCN, preprocess_data 
 
 def load_model(stock_code):

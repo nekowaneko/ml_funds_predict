@@ -1,6 +1,6 @@
 import requests
 from typing import Optional, Tuple, Dict, Any
-from . import config
+import config
 
 def send_message(msg: str, image_path: Optional[str] = None) -> Tuple[int, Dict[str, Any]]:
     """

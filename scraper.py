@@ -7,8 +7,8 @@ from datetime import datetime
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 # 導入自定義模組
-from . import config
-from . import utils
+import config
+import utils
 
 # 重試裝飾器：針對網路錯誤進行指數退避重試
 @retry(

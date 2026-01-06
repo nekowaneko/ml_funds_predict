@@ -10,8 +10,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
 # 導入自定義模組
-from . import config
-from . import utils
+import config
+import utils
 
 # 定義 TCN 模型
 # Input shape: (Batch, Window_Size, Features)
