@@ -102,8 +102,42 @@ def get_stock_data(date_str, stock_code):
         # 尋找表格標題與內容
         thead = soup.find('thead')
         if thead is None:
-            print(f"⚠️ 警告: 無法找到表格標題 (可能該月無資料或休市) - {stock_code} {date_str}")
+            print(f"警告: 無法找到表格標題 (可能該月無資料或休市) - {stock_code} {date_str}")
             return None
+        
+        title_rows = thead.find_all('tr')
+        if not title_rows:
+            return None
+            
+        # 證交所的表格可能有兩層 tr，我們取最後一層包含實際欄位名稱的
+        columns = [th.text.strip() for th in title_rows[-1].find_all(['th', 'td'])]
+        
+        # 檢查欄位數量是否與資料對齊
+        datalist = []
+        tbody = soup.find('tbody')
+        if tbody:
+             for row in tbody.find_all('tr'):
+                cols = [col.text.strip() for col in row.find_all('td')]
+                if len(cols) == len(columns):
+                    datalist.append(cols)
+        
+        if not datalist:
+            return None
+
+        # 建立 DataFrame
+        df = pd.DataFrame(datalist, columns=columns)
+        
+        # 轉換日期格式 (使用 utils 模組)
+        if '日期' in df.columns:
+            df['日期'] = df['日期'].apply(utils.transform_date)
+            
+        print(f'股票 {stock_code} {config.WATCH_STOCKS.get(stock_code, "")} {date_str} 資料搜集成功')
+        return df
+        
+    except Exception as e:
+        print(f"抓取失敗 {stock_code} {date_str}: {e}")
+        return None
+
         
         title_row = thead.find('tr')
         if title_row is None:
