@@ -4,11 +4,19 @@ from dotenv import load_dotenv
 # Load environment variables from a .env file if it exists
 load_dotenv()
 
-# --- Stock Configuration ---
-SYMBOL_DICT = {
+# --- Stock & Fund Configuration ---
+# 觀察標的：用來預測基金走勢的股票
+WATCH_STOCKS = {
     '3661': '世芯-KY',
     '3017': '奇鋐',
     '2330': '台積電'
+}
+
+# 預測目標：統一黑馬基金
+TARGET_FUND = {
+    'id': 'WMF001431',
+    'name': '統一黑馬基金',
+    'url': 'https://wealth.yuanta.com.tw/WMECPortal/Wealth/Fundcenter/FundPage/60021903?'
 }
 
 # --- Scraper Configuration ---
@@ -18,8 +26,10 @@ HEADERS = {
 
 BASE_URL_PATTERN = 'https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date={}&stockNo={}&response=html'
 
-# Directory to save raw stock data (CSV files)
-DATA_DIR = os.path.join(os.path.dirname(__file__), 'uniblack_stocks')
+# Directory to save raw data
+DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
+STOCK_DATA_DIR = os.path.join(DATA_DIR, 'stocks')
+FUND_DATA_DIR = os.path.join(DATA_DIR, 'funds')
 
 # --- Discord Configuration ---
 # 從環境變數讀取 Token 與 Channel ID，若無則使用預設值 (建議設為環境變數以策安全)
