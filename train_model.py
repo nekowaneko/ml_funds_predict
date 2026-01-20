@@ -139,7 +139,11 @@ def train_fund_model():
     # 分割資料
     x_train, x_test, y_train, y_test = train_test_split(x_tensor, y_tensor, test_size=0.2, random_state=42)
     
-    train_loader = DataLoader(TensorDataset(x_train, F.one_hot(y_train, 2).float()), batch_size=config.BATCH_SIZE, shuffle=True)
+    train_dataset = TensorDataset(x_train, F.one_hot(y_train, 2).float())
+    test_dataset = TensorDataset(x_test, F.one_hot(y_test, 2).float())
+    
+    train_loader = DataLoader(train_dataset, batch_size=config.BATCH_SIZE, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=False)
     
     # 初始化模型
     model = TCN(window_size, 2)
@@ -149,15 +153,39 @@ def train_fund_model():
     # 訓練
     for epoch in range(config.EPOCHS):
         model.train()
+        train_loss = 0.0
         for inputs, targets in train_loader:
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
+            train_loss += loss.item()
             
+        # 評估模式 (Evaluation Mode)
+        model.eval()
+        test_loss = 0.0
+        correct = 0
+        total = 0
+        with torch.no_grad():
+            for inputs, targets in test_loader:
+                outputs = model(inputs)
+                loss = criterion(outputs, targets)
+                test_loss += loss.item()
+                
+                # 計算準確度
+                _, predicted = torch.max(outputs.data, 1)
+                _, labels = torch.max(targets.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+        
         if (epoch + 1) % 10 == 0:
-            print(f'Epoch [{epoch+1}/{config.EPOCHS}], Loss: {loss.item():.4f}')
+            avg_train_loss = train_loss / len(train_loader)
+            avg_test_loss = test_loss / len(test_loader)
+            accuracy = correct / total if total > 0 else 0
+            print(f'Epoch [{epoch+1}/{config.EPOCHS}]')
+            print(f'  Train Loss: {avg_train_loss:.4f} | Test Loss: {avg_test_loss:.4f}')
+            print(f'  Test Accuracy: {accuracy:.2%}')
 
     # 儲存
     utils.ensure_dir_exists(config.MODEL_SAVE_DIR)

@@ -50,69 +50,117 @@ def get_fund_data():
         price_text = price_element.text.strip().replace('TWD', '').replace(',', '').strip()
         price = float(price_text)
         
-        print(f'基金抓取成功: {date_text}, 淨值: {price}')
+        print(f'Fund Data Success: {date_text}, Value: {price}')
         return {'date': date_text, 'net_value': price}
     except Exception as e:
-        print(f"基金抓取失敗: {e}")
+        print(f"Fund Fetch Failed: {e}")
         return None
+
+def get_fund_history():
+    """
+    抓取目標基金的歷史淨值
+    使用台北富邦的歷史資料介面
+    """
+    print(f'Fetching History for {config.TARGET_FUND["name"]}...')
+    # 台北富邦歷史淨值 URL
+    history_url = "https://fund.taipeifubon.com.tw/w/wr/wr02_ACPS02-0603.djhtm"
+    
+    try:
+        res = fetch_url(history_url)
+        res.encoding = 'big5'
+        soup = BeautifulSoup(res.text, 'html.parser')
+        
+        history_data = []
+        # 尋找所有表格並篩選包含關鍵字的
+        tables = soup.find_all('table')
+        for table in tables:
+            rows = table.find_all('tr')
+            if not rows:
+                continue
+                
+            # 檢查標題列是否包含日期與淨值
+            header_text = rows[0].get_text()
+            if '日期' in header_text and '淨值' in header_text:
+                for row in rows[1:]:
+                    cols = row.find_all('td')
+                    if len(cols) >= 2:
+                        date_str = cols[0].get_text().strip()
+                        price_str = cols[1].get_text().strip().replace(',', '')
+                        
+                        # 驗證日期格式 YYYY/MM/DD
+                        if '/' in date_str and len(date_str) >= 8:
+                            try:
+                                # 嘗試轉換日期確保格式正確
+                                valid_date = datetime.strptime(date_str, '%Y/%m/%d').strftime('%Y/%m/%d')
+                                price_val = float(price_str)
+                                history_data.append({'date': valid_date, 'net_value': price_val})
+                            except ValueError:
+                                continue
+        
+        # 去重
+        seen_dates = set()
+        unique_history = []
+        for item in history_data:
+            if item['date'] not in seen_dates:
+                unique_history.append(item)
+                seen_dates.add(item['date'])
+        
+        print(f'Successfully fetched {len(unique_history)} fund history records')
+        return unique_history
+    except Exception as e:
+        print(f"Fund History Fetch Failed: {e}")
+        return []
 
 def save_fund_data(data):
     """
-    儲存基金資料
+    儲存基金資料 (支援單筆 dict 或多筆 list)
     """
     if not data:
         return
     
+    if isinstance(data, dict):
+        data = [data]
+    
     utils.ensure_dir_exists(config.FUND_DATA_DIR)
     file_path = os.path.join(config.FUND_DATA_DIR, f"{config.TARGET_FUND['id']}.csv")
     
-    df = pd.DataFrame([data])
-    mode = 'a' if os.path.exists(file_path) else 'w'
-    header = not os.path.exists(file_path)
+    new_df = pd.DataFrame(data)
     
-    if mode == 'a':
-        existing = pd.read_csv(file_path)
-        if data['date'] in existing['date'].values:
-            print('ℹ️ 基金資料已存在，不重複寫入')
-            return
-            
-    df.to_csv(file_path, mode=mode, header=header, index=False)
-    print('💾 基金資料寫入完成！')
+    if os.path.exists(file_path):
+        existing_df = pd.read_csv(file_path)
+        # 合併並去重
+        combined_df = pd.concat([existing_df, new_df]).drop_duplicates(subset=['date'], keep='last')
+        combined_df = combined_df.sort_values('date', ascending=True)
+        combined_df.to_csv(file_path, index=False)
+    else:
+        new_df = new_df.sort_values('date', ascending=True)
+        new_df.to_csv(file_path, index=False)
+        
+    print(f'SAVE FUND: {file_path} (Total: {len(pd.read_csv(file_path))})')
 
 def get_stock_data(date_str, stock_code):
     """
     抓取證交所個股日成交資訊
-    
-    參數:
-        date_str (str): 日期字串，格式為 YYYYMM01
-        stock_code (str): 股票代碼
-        
-    回傳:
-        pd.DataFrame: 包含該月份成交資訊的 DataFrame，若無資料則回傳 None
     """
-    print(f'正在抓取 {stock_code} 於 {date_str} 的資料...')
+    print(f'Fetching {stock_code} at {date_str}...')
     
-    # 格式化目標網址
     url = config.BASE_URL_PATTERN.format(date_str, stock_code)
     
     try:
         res = fetch_url(url)
         soup = BeautifulSoup(res.content, 'html.parser')
         
-        # 尋找表格標題與內容
         thead = soup.find('thead')
         if thead is None:
-            print(f"警告: 無法找到表格標題 (可能該月無資料或休市) - {stock_code} {date_str}")
+            print(f"Warning: No table header - {stock_code} {date_str}")
             return None
         
         title_rows = thead.find_all('tr')
         if not title_rows:
             return None
             
-        # 證交所的表格可能有兩層 tr，我們取最後一層包含實際欄位名稱的
         columns = [th.text.strip() for th in title_rows[-1].find_all(['th', 'td'])]
         
-        # 檢查欄位數量是否與資料對齊
         datalist = []
         tbody = soup.find('tbody')
         if tbody:
@@ -124,49 +172,16 @@ def get_stock_data(date_str, stock_code):
         if not datalist:
             return None
 
-        # 建立 DataFrame
         df = pd.DataFrame(datalist, columns=columns)
         
-        # 轉換日期格式 (使用 utils 模組)
         if '日期' in df.columns:
             df['日期'] = df['日期'].apply(utils.transform_date)
             
-        print(f'股票 {stock_code} {config.WATCH_STOCKS.get(stock_code, "")} {date_str} 資料搜集成功')
+        print(f'Stock {stock_code} {date_str} Success')
         return df
         
     except Exception as e:
-        print(f"抓取失敗 {stock_code} {date_str}: {e}")
-        return None
-
-        
-        title_row = thead.find('tr')
-        if title_row is None:
-            return None
-            
-        # 修正：標題列通常使用 <th> 標籤，而非 <td>
-        columns = [th.text.strip() for th in title_row.find_all(['th', 'td'])]
-        
-        datalist = []
-        tbody = soup.find('tbody')
-        if tbody:
-             for row in tbody.find_all('tr'):
-                datalist.append([col.text.strip() for col in row.find_all('td')])
-        
-        if not datalist:
-            return None
-
-        # 建立 DataFrame
-        df = pd.DataFrame(datalist, columns=columns)
-        
-        # 轉換日期格式 (使用 utils 模組)
-        if '日期' in df.columns:
-            df['日期'] = df['日期'].apply(utils.transform_date)
-            
-        print(f'✅ {stock_code} {config.WATCH_STOCKS.get(stock_code, "")} {date_str} 資料搜集成功')
-        return df
-        
-    except Exception as e:
-        print(f"❌ 抓取失敗 {stock_code} {date_str}: {e}")
+        print(f"Fetch Failed {stock_code} {date_str}: {e}")
         return None
 
 def save_stock_data(df, stock_code):
@@ -188,22 +203,23 @@ def save_stock_data(df, stock_code):
         if mode == 'a':
             existing_data = pd.read_csv(file_path)
             if not df.empty and df['日期'].iloc[0] in existing_data['日期'].values:
-                print(f'ℹ️ {stock_code} 資料已重複，跳過寫入')
+                print(f'INFO: {stock_code} Duplicate date, skipping')
                 return
 
         df.to_csv(file_path, mode=mode, header=header, index=False)
-        print(f'💾 {stock_code} 寫入完成！')
+        print(f'SAVE STOCK: {stock_code} DONE')
         
     except Exception as e:
-        print(f"❌ 股票存檔錯誤: {e}")
+        print(f"Error saving stock: {e}")
 
 def main():
     # 1. 抓取觀察標的股票資料
     today = datetime.today()
-    target_dates = utils.generate_date_list(2023, 1, today.year, today.month)
+    # 縮短時間範圍以進行測試：從 2025 年 11 月開始抓取
+    target_dates = utils.generate_date_list(2025, 11, today.year, today.month)
     watch_stocks = list(config.WATCH_STOCKS.keys())
     
-    print(f"開始爬取股票資料...")
+    print(f"Starting Scraper...")
     for stock in watch_stocks:
         for date_str in target_dates:
             df = get_stock_data(date_str, stock)
@@ -211,8 +227,15 @@ def main():
             time.sleep(3) 
 
     # 2. 抓取目標基金資料
-    fund_data = get_fund_data()
-    save_fund_data(fund_data)
+    # 先嘗試抓取歷史資料以確保資料量足夠訓練
+    fund_history = get_fund_history()
+    if fund_history:
+        save_fund_data(fund_history)
+    
+    # 再抓取最新一筆 (確保當日最新)
+    fund_latest = get_fund_data()
+    if fund_latest:
+        save_fund_data(fund_latest)
 
 
 if __name__ == "__main__":

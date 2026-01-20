@@ -41,29 +41,27 @@ def run_pipeline(do_train=False):
     # 3. 執行預測與發送通知
     print("\n--- 步驟 3: 執行預測與通知 ---")
     results = []
-    target_stocks = list(config.SYMBOL_DICT.keys())
     
-    for stock in target_stocks:
-        try:
-            is_buy, conf, last_date = predict.predict_signal(stock)
-            stock_name = config.SYMBOL_DICT.get(stock, stock)
+    try:
+        is_buy, conf, last_date = predict.predict_fund_signal()
+        fund_name = config.TARGET_FUND['name']
+        
+        if last_date:
+            signal_emoji = "🔴" if is_buy else "🟢"
+            signal_text = "建議進場 (看漲)" if is_buy else "建議觀望 (看跌/盤整)"
             
-            if last_date:
-                signal_emoji = "🔴" if is_buy else "🟢"
-                signal_text = "建議進場" if is_buy else "建議觀望"
-                
-                result_str = (
-                    f"{signal_emoji} {stock_name} ({stock})\n"
-                    f"日期: {last_date}\n"
-                    f"訊號: {signal_text}\n"
-                    f"信心: {conf:.1%}"
-                )
-                results.append(result_str)
-                print(result_str)
-                print("-" * 20)
-                
-        except Exception as e:
-            print(f"❌ 預測 {stock} 時發生錯誤: {e}")
+            result_str = (
+                f"{signal_emoji} {fund_name}\n"
+                f"日期: {last_date}\n"
+                f"訊號: {signal_text}\n"
+                f"信心: {conf:.1%}"
+            )
+            results.append(result_str)
+            print(result_str)
+            print("-" * 20)
+            
+    except Exception as e:
+        print(f"❌ 預測 {config.TARGET_FUND['name']} 時發生錯誤: {e}")
 
     # 4. 發送匯總通知
     if results:

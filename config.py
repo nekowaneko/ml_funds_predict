@@ -19,6 +19,9 @@ TARGET_FUND = {
     'url': 'https://wealth.yuanta.com.tw/WMECPortal/Wealth/Fundcenter/FundPage/60021903?'
 }
 
+# 綜合代碼與名稱對照表 (供預測與通知使用)
+SYMBOL_DICT = {**WATCH_STOCKS, TARGET_FUND['id']: TARGET_FUND['name']}
+
 # --- Scraper Configuration ---
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
