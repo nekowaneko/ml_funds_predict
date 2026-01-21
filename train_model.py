@@ -118,7 +118,7 @@ def train_fund_model():
     print(f"🚀 開始訓練基金預測模型: {config.TARGET_FUND['name']}")
     
     df = load_and_align_data()
-    if df is None or len(df) < 50:
+    if df is None or len(df) < 30:
         print(f"⚠️ 資料不足，無法訓練。 (目前筆數: {len(df) if df is not None else 0})")
         return
 
