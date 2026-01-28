@@ -18,7 +18,7 @@ def load_fund_model():
         print(f"⚠️ 找不到模型檔案: {model_path}")
         return None, None
     
-    checkpoint = torch.load(model_path)
+    checkpoint = torch.load(model_path, weight_only=False)
     
     # 初始化模型架構
     input_size = config.WINDOW_SIZE
