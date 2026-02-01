@@ -20,10 +20,11 @@ def load_fund_model():
     
     checkpoint = torch.load(model_path, weights_only=False)
     
-    # 初始化模型架構
+    # 初始化模型架構（需要從 checkpoint 取得 num_features）
     input_size = config.WINDOW_SIZE
     output_size = 2
-    model = TCN(input_size, output_size)
+    num_features = checkpoint['num_features']
+    model = TCN(input_size, output_size, num_features)
     model.load_state_dict(checkpoint['model_state'])
     model.eval()
     

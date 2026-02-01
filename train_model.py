@@ -16,7 +16,15 @@ import utils
 # 定義 TCN 模型
 # Input shape: (Batch, Window_Size, Features)
 class TCN(nn.Module):
-    def __init__(self, input_size, output_size):
+    def __init__(self, input_size: int, output_size: int, num_features: int):
+        """
+        初始化 TCN 模型。
+
+        Args:
+            input_size: 視窗大小 (config.WINDOW_SIZE)
+            output_size: 輸出類別數 (例如 2 表示二元分類)
+            num_features: 特徵數量 (觀察標的股票數)
+        """
         super(TCN, self).__init__()
         # input_size: 視窗大小 (config.WINDOW_SIZE)
         # 這裡假設 Features 數量為標的股票數
@@ -24,10 +32,11 @@ class TCN(nn.Module):
         self.relu = nn.ReLU()
         self.pool = nn.MaxPool1d(kernel_size=2)
         
-        # 動態計算 Flatten 後的維度
-        # 輸入形狀: (Batch, Window_Size, Num_Features)
-        # Conv1d 作用在 Num_Features 維度上
-        self.fc1 = None 
+        # 計算 Flatten 後的維度
+        # Conv1d(padding=1) 保持 num_features 維度不變
+        # MaxPool1d(kernel_size=2) 將 num_features 減半
+        fc1_input_dim = 64 * (num_features // 2)
+        self.fc1 = nn.Linear(fc1_input_dim, 128)
         self.fc2 = nn.Linear(128, output_size)
 
     def forward(self, x):
@@ -35,11 +44,7 @@ class TCN(nn.Module):
         x = self.conv1(x) 
         x = self.relu(x)
         x = self.pool(x)
-        x = x.view(x.size(0), -1) 
-        
-        if self.fc1 is None:
-            self.fc1 = nn.Linear(x.size(1), 128).to(x.device)
-            
+        x = x.view(x.size(0), -1)
         x = self.fc1(x)
         x = self.relu(x)
         x = self.fc2(x)
@@ -146,7 +151,8 @@ def train_fund_model():
     test_loader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=False)
     
     # 初始化模型
-    model = TCN(window_size, 2)
+    num_features = clean_features.shape[1]
+    model = TCN(window_size, 2, num_features)
     criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=config.LEARNING_RATE)
     
@@ -192,7 +198,8 @@ def train_fund_model():
     torch.save({
         'model_state': model.state_dict(),
         'scaler': scaler,
-        'features': list(clean_features.columns)
+        'features': list(clean_features.columns),
+        'num_features': num_features  # 儲存特徵數量以供推論時使用
     }, os.path.join(config.MODEL_SAVE_DIR, 'fund_model.pth'))
     print("✅ 基金預測模型訓練完成並已儲存。")
 
