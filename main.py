@@ -52,7 +52,7 @@ def run_pipeline(do_train=False):
             
             result_str = (
                 f"{signal_emoji} {fund_name}\n"
-                f"日期: {last_date}\n"
+                f"資料對齊日期: {last_date.strftime('%Y/%m/%d')}\n"
                 f"訊號: {signal_text}\n"
                 f"信心: {conf:.1%}"
             )
@@ -69,7 +69,7 @@ def run_pipeline(do_train=False):
         header = f"\n📊 【每日股票預測報告】 {datetime.now().strftime('%Y/%m/%d')}\n"
         full_msg = header + summary_msg
         
-        print("\n📤 正在發送 Line 通知...")
+        print("\n📤 正在發送 Discord 通知...")
         status, resp = notifier.send_message(full_msg)
         if status == 200:
             print("✅ 通知發送成功")
