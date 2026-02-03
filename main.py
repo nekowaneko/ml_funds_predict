@@ -52,7 +52,7 @@ def run_pipeline(do_train=False):
             
             result_str = (
                 f"{signal_emoji} {fund_name}\n"
-                f"資料對齊日期: {last_date.strftime('%Y/%m/%d')}\n"
+                f"資料對齊日期: {last_date}\n"
                 f"訊號: {signal_text}\n"
                 f"信心: {conf:.1%}"
             )
